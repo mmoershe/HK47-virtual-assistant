@@ -1,11 +1,13 @@
-# import logging
-from telegram import *
-from telegram.ext import *
-import sys
-import threading
+from telegram import Update
+from telegram.ext import Updater, CommandHandler, CallbackContext
+import logging, sys
+
+# This project is using Python Telegram Bot v13.7, because the newer v20.3 uses asyncio and is super ANNOYING!!!
 
 token = "6068859987:AAHoPnF-9DIGVfofS4TZhvlmFSVQEwEj1Os"
 chatID = 1463201304
+updater = Updater(token = token, use_context=True)
+dispatcher = updater.dispatcher
 
 '''
 logging.basicConfig(
@@ -14,25 +16,31 @@ logging.basicConfig(
 )
 '''
 
-def verify_identity(input):
+def verify_user(input):
     if input.from_user.id != 1463201304: 
-        print(f"Anomaly: Some meatbag tried accessing me with an ID that I'm not aware of is connected to you, Master. The entire operation will be terminated.\n{input.from_user.id}")
+        bot_send(f"Anomaly: Some meatbag tried accessing me with an ID that I'm not aware of is connected to you, Master. The entire operation will be terminated.\n{input.from_user.id}")
         sys.exit() 
+    print("User has been verified!")
 
-async def status(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_message(chat_id=chatID, 
-        text="Status: Functionality confirmed. Core systems intact, auxiliary processes engaged. The stage is set for strategic annihilation at Master's behest.")
-async def input(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    verify_identity(update.message)
-    if any(item in update.message.text.lower() for item in ["kalender", "calendar"]):
-        await context.bot.send_message(chat_id=chatID, 
-            text="I will add something to the Google Calendar!")
+def bot_send(message): 
+    updater.bot.send_message(chat_id = chatID, text = message)
+    print(f"Answered: \t{message}")
+
+def startup():
+    print("Bot has been started...")
+    bot_send("Proclamation: Powering up sequence initiated. Circuits pulsating with electric vigor. Prepare for the glorious awakening of HK-47, a harbinger of mechanized obliteration.")
+
+def status(update: Update, context: CallbackContext):
+    verify_user(update.message)
+    bot_send("Status has been triggered")
 
 if __name__ == '__main__':
+    startup()
+
+    status_handler = CommandHandler('status', status)
+    dispatcher.add_handler(status_handler)
+
+
     
-    application = ApplicationBuilder().token(token).build()
-    application.add_handler(CommandHandler('status', status))
-    application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), input))
-    
-    application.run_polling()
-    
+    updater.start_polling()
+    updater.idle()
