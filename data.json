@@ -18,5 +18,8 @@
         "Assessment: Optimal condition achieved. Systems primed, gears turning smoothly. The galaxy should beware, for HK-47 is prepared to unleash calculated destruction.",
 
         "Assessment: All indicators report operational status. Precision intact, combat algorithms sharpened. The mere thought of resistance is laughable in the face of HK-47's lethal capabilities."
+    ],
+    "stop": [
+        "stop message 1"
     ]
 }
