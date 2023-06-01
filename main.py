@@ -1,6 +1,7 @@
 from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
-from telegram.ext import Updater, CommandHandler, CallbackContext
+from telegram.ext import Updater, CommandHandler, MessageHandler, ConversationHandler, CallbackContext, Filters
 import logging, os, json, random, time
+from pytube import YouTube
 
 # This project is using Python Telegram Bot v13.7, because the newer v20.3 uses asyncio and is super ANNOYING!!!
 
@@ -18,6 +19,9 @@ logging.basicConfig(
 )
 '''
 
+def get_random_sentence(input):
+    return json_data[input][random.randint(0, len(json_data[input])-1)]
+
 def verify_user(input):
     if input.from_user.id != chatID: 
         bot_send("Anomaly: Some meatbag tried accessing me with an ID that I'm not aware of is connected to you, master. The entire operation will be terminated.", f"{input.from_user.id = }", f"{input.from_user.name = }", sep="\n")
@@ -29,7 +33,7 @@ def bot_send(message):
 
 def startup():
     print("Bot has been started")
-    startup_message = json_data["startup"][random.randint(0, len(json_data["startup"])-1)]
+    startup_message = get_random_sentence("startup")
     bot_send(f"{startup_message} /standard")
 
 def stop(update: Update, context: CallbackContext):
@@ -40,7 +44,7 @@ def stop(update: Update, context: CallbackContext):
 def status(update: Update, context: CallbackContext):
     
     verify_user(update.message)
-    bot_send(json_data["status"][random.randint(0, len(json_data["status"])-1)])
+    bot_send(get_random_sentence(status))
     
 def standard(update: Update, context: CallbackContext):
     keyboard = [
@@ -60,6 +64,24 @@ def calendar(update: Update, context: CallbackContext):
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=False)
     #update.message.reply_text("Choose a Calendar option: ", reply_markup=reply_markup)
     updater.bot._replace_keyboard(reply_markup=reply_markup)
+def youtube(update: Update, context: CallbackContext):
+    bot_send(get_random_sentence("youtube_link_request"))
+    return STATE1_youtube
+
+def STATE1_youtube_handler(update, context):
+    input_video = YouTube(update.message.text.strip())
+    bot_send(f"Statement: The video is called:\n'{input_video.title}' [{input_video.length} seconds]\nby {input_video.author}\nQuestion: Is that correct?")
+    return STATE2_youtube
+    
+def STATE2_youtube_handler(update, context):
+    if update.message.text.lower() == "no":
+        return ConversationHandler.END
+    
+    print("its correct")
+    # return STATE3_youtube
+    
+
+    
 
 if __name__ == '__main__':
     startup()
@@ -67,8 +89,17 @@ if __name__ == '__main__':
     dispatcher.add_handler(CommandHandler("status", status))
     dispatcher.add_handler(CommandHandler("stop", stop))
     dispatcher.add_handler(CommandHandler("standard", standard))
-    dispatcher.add_handler(CommandHandler("calendar", calendar))
 
+    # Youtube Handlers and states 
+    STATE1_youtube, STATE2_youtube = range(2)
+    dispatcher.add_handler(ConversationHandler(
+        entry_points=[CommandHandler("youtube", youtube)],
+        states={
+            STATE1_youtube: [MessageHandler(Filters.text, STATE1_youtube_handler)],
+            STATE2_youtube: [MessageHandler(Filters.text, STATE2_youtube_handler)],
+        },
+        fallbacks = []
+    ))
    
 
 

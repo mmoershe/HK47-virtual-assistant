@@ -1,8 +1,5 @@
-import sys
-import time
+STATE_1, STATE_2 = range(2)
 
-for i in range(5):
-    print(i)
-    time.sleep(1)
-
-sys.exit()
+print(f"{STATE_1}")
+print(f"{STATE_2}")
+print(f"{range(2)}")
