@@ -1,4 +1,4 @@
-from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
+from telegram import Update, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup        
 from telegram.ext import Updater, CommandHandler, MessageHandler, ConversationHandler, CallbackContext, Filters
 import logging, os, json, random, time
 from pytube import YouTube
@@ -34,7 +34,7 @@ def bot_send(message):
 def startup():
     print("Bot has been started")
     startup_message = get_random_sentence("startup")
-    bot_send(f"{startup_message} /standard")
+    bot_send(f"{startup_message} /youtube")
 
 def stop(update: Update, context: CallbackContext):
     bot_send(json_data["stop"][random.randint(0, len(json_data["stop"])-1)])
@@ -56,29 +56,38 @@ def standard(update: Update, context: CallbackContext):
     update.message.reply_text("standard reply", reply_markup=reply_markup)    
 
 def calendar(update: Update, context: CallbackContext):
-    keyboard = [
-        [KeyboardButton("Calendar Option 1")], 
-        [KeyboardButton("Calendar Option 2")], 
-        [KeyboardButton("Calendar Option 3")]
-    ]
-    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=False)
-    #update.message.reply_text("Choose a Calendar option: ", reply_markup=reply_markup)
-    updater.bot._replace_keyboard(reply_markup=reply_markup)
+    bot_send("calendar has been triggered.")
 def youtube(update: Update, context: CallbackContext):
     bot_send(get_random_sentence("youtube_link_request"))
     return STATE1_youtube
 
 def STATE1_youtube_handler(update, context):
     input_video = YouTube(update.message.text.strip())
-    bot_send(f"Statement: The video is called:\n'{input_video.title}' [{input_video.length} seconds]\nby {input_video.author}\nQuestion: Is that correct?")
+    keyboard = [
+        [KeyboardButton("Yes")],
+        [KeyboardButton("No")]
+    ]
+    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=False)
+    update.message.reply_text(f"Statement: The video is called:\n'{input_video.title}' [{input_video.length} seconds]\nby {input_video.author}\nQuestion: Is that correct?", reply_markup=reply_markup) 
     return STATE2_youtube
     
 def STATE2_youtube_handler(update, context):
-    if update.message.text.lower() == "no":
+    if update.message.text.lower() != "Yes":
         return ConversationHandler.END
     
-    print("its correct")
-    # return STATE3_youtube
+    keyboard = [
+        [KeyboardButton("MP3")],
+        [KeyboardButton("MP4")]
+    ]
+    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=False)
+    update.message.reply_text(f"Query: Choose a file format.", reply_markup=reply_markup)
+    return STATE3_youtube
+
+def STATE3_youtube_handler(update, context): 
+    if update.message.text == "MP3":
+        bot_send("You chose MP3")
+    
+    return ConversationHandler.END
     
 
     
@@ -91,12 +100,13 @@ if __name__ == '__main__':
     dispatcher.add_handler(CommandHandler("standard", standard))
 
     # Youtube Handlers and states 
-    STATE1_youtube, STATE2_youtube = range(2)
+    STATE1_youtube, STATE2_youtube, STATE3_youtube = range(3)
     dispatcher.add_handler(ConversationHandler(
         entry_points=[CommandHandler("youtube", youtube)],
         states={
             STATE1_youtube: [MessageHandler(Filters.text, STATE1_youtube_handler)],
             STATE2_youtube: [MessageHandler(Filters.text, STATE2_youtube_handler)],
+            STATE3_youtube: [MessageHandler(Filters.text, STATE3_youtube_handler)],
         },
         fallbacks = []
     ))
