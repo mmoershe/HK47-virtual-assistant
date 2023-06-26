@@ -5,7 +5,7 @@ from pytube import YouTube
 
 # This project is using Python Telegram Bot v13.7, because the newer v20.3 uses asyncio and is super ANNOYING!!!
 
-json_file = open("data.json", "r")
+json_file = open("memory.json", "r")
 json_data = json.load(json_file)
 token = json_data["token"]
 chatID = json_data["chatID"]

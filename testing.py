@@ -1,5 +1,14 @@
-STATE_1, STATE_2 = range(2)
+from beautiful_date import *
+from gcsa.google_calendar import GoogleCalendar
+from gcsa.event import Event
 
-print(f"{STATE_1}")
-print(f"{STATE_2}")
-print(f"{range(2)}")
+
+gc = GoogleCalendar(credentials_path = "auth\\credentials.json")    
+
+
+start = (30/Jun/2023)[12:00]
+end = (30/Jun/2023)[14:00]
+
+event = Event("Test1", start=start, end=end)
+
+event = gc.add_event(event)
