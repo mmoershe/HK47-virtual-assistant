@@ -3,6 +3,12 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, ConversationHa
 import logging, os, json, random, time
 from pytube import YouTube
 
+import requests
+from bs4 import BeautifulSoup
+from beautiful_date import * 
+from dateutil import parser
+
+
 # This project is using Python Telegram Bot v13.7, because the newer v20.3 uses asyncio and is super ANNOYING!!!
 
 json_file = open("memory.json", "r")
@@ -55,6 +61,58 @@ def standard(update: Update, context: CallbackContext):
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=False)
     update.message.reply_text("standard reply", reply_markup=reply_markup)    
 
+def comics(update: Update, context: CallbackContext):
+    def tableDataText(table):    
+        """Parses a html segment started with tag <table> followed 
+        by multiple <tr> (table rows) and inner <td> (table data) tags. 
+        It returns a list of rows with inner columns. 
+        Accepts only one <th> (table header/data) in the first row.
+        """
+        def rowgetDataText(tr, coltag='td'): # td (data) or th (header)       
+            return [td.get_text(strip=True) for td in tr.find_all(coltag)]  
+        rows = []
+        trs = table.find_all('tr')
+        headerow = rowgetDataText(trs[0], 'th')
+        if headerow: # if there is a header row include first
+            rows.append(headerow)
+            trs = trs[1:]
+        for tr in trs: # for every table row
+            rows.append(rowgetDataText(tr, 'td') ) # data row       
+        return rows
+
+    def convertToBeautifulDate(date):
+        if not isinstance(date, str):
+            print(f"convertToBeautifulDate() has received a {type(date) = } instead of a String.")
+            return
+        try: 
+            parsed_date = parser.parse(date)
+            return BeautifulDate(parsed_date.year, parsed_date.month, parsed_date.day)
+        except: 
+            return 
+
+
+    url = "https://starwars.fandom.com/wiki/List_of_future_comics"
+    html = requests.get(url, auth=("user", "pass")).text
+    future_swcomics_html = BeautifulSoup(html, "html.parser")
+    table = future_swcomics_html.find(id="prettytable")
+    table = tableDataText(table)
+    table.pop(0)
+    current_date = D.today()
+    date_range = []
+    for i in range(7):
+        date_range.append(current_date+i*days)
+
+    bot_send("Statement: In the next 7 days the following comics will be released:")
+    for row in table:
+        title= row[0]
+        type_comic = "Issue" if row[1].lower() == "comic book" else row[1].title()
+        publish_date = convertToBeautifulDate(row[2])
+        if not all([title, type_comic, publish_date]): 
+            continue
+        if publish_date in date_range: 
+            bot_send(f"{type_comic}:\t{title} [{publish_date}]")
+
+    
 def calendar(update: Update, context: CallbackContext):
     bot_send("calendar has been triggered.")
 def youtube(update: Update, context: CallbackContext):
@@ -98,6 +156,7 @@ if __name__ == '__main__':
     dispatcher.add_handler(CommandHandler("status", status))
     dispatcher.add_handler(CommandHandler("stop", stop))
     dispatcher.add_handler(CommandHandler("standard", standard))
+    dispatcher.add_handler(CommandHandler("comics", comics))
 
     # Youtube Handlers and states 
     STATE1_youtube, STATE2_youtube, STATE3_youtube = range(3)
