@@ -17,6 +17,7 @@ token = json_data["token"]
 chatID = json_data["chatID"]
 updater = Updater(token = token, use_context=True)
 dispatcher = updater.dispatcher
+weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
 '''
 logging.basicConfig(
@@ -110,7 +111,7 @@ def comics(update: Update, context: CallbackContext):
         if not all([title, type_comic, publish_date]): 
             continue
         if publish_date in date_range: 
-            bot_send(f"{type_comic}:\t{title} [{publish_date}]")
+            bot_send(f"{type_comic}: {title} [{weekdays[publish_date.weekday()][:3]}]")
 
     
 def calendar(update: Update, context: CallbackContext):
