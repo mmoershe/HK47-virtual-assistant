@@ -2,7 +2,9 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 
-driver = webdriver.Chrome()
+options = webdriver.ChromeOptions()
+options.binary_location = '/usr/bin/chromium-browser'
+driver = webdriver.Chrome(options=options)
 driver.get("http://www.python.org")
 assert "Python" in driver.title
 elem = driver.find_element(By.NAME, "q")
