@@ -4,5 +4,6 @@ from selenium.webdriver.common.by import By
 
 # myoptions = webdriver.ChromeOptions()
 # myoptions.binary_location = '/usr/bin/chromium-browser'
-driver = webdriver.Chrome('/usr/lib/chromium-browser/chromedriver')
+path_chromium = "/usr/lib/chromium-browser/chromedriver"
+driver = webdriver.Chrome()
 driver.get("http://www.python.org")
