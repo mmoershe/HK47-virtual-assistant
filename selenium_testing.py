@@ -3,5 +3,5 @@ import time
 
 driver = webdriver.Chrome()
 
-driver.get("http://www.python.org")
+driver.get("https://www.twitch.com/brawlhalla")
 time.sleep(111)
