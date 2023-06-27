@@ -14,7 +14,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 driver_path = os.path.join(current_dir, 'chromedriver')
 
 
-driver = webdriver.Chrome(driver_path, options=chrome_options)
+driver = webdriver.Chrome(driver_path)
 
 driver.get("https://www.selenium.dev/selenium/web/web-form.html")
 
