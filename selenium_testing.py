@@ -2,11 +2,11 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import os
 
-chrome_options = webdriver.ChromeOptions()
-# chrome_options.add_argument('--headless')
-# chrome_options.add_argument('--no-sandbox')
-# chrome_options.add_argument('--disable-dev-shm-usage')
-# chrome_options.binary_location = '/usr/bin/chromium-browser'
+options = webdriver.ChromeOptions()
+options.add_argument('--headless')
+options.add_argument('--no-sandbox')
+options.add_argument('--disable-dev-shm-usage')
+options.binary_location = '/usr/bin/chromium-browser'
 
 # Get the current directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -14,7 +14,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 driver_path = os.path.join(current_dir, 'chromedriver')
 
 
-driver = webdriver.Chrome(driver_path)
+driver = webdriver.Chrome(driver_path, options=options)
 
 driver.get("https://www.selenium.dev/selenium/web/web-form.html")
 
