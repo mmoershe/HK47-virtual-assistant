@@ -3,10 +3,10 @@ from selenium.webdriver.chrome.options import Options
 import os
 
 chrome_options = webdriver.ChromeOptions()
-chrome_options.add_argument('--headless')
-chrome_options.add_argument('--no-sandbox')
-chrome_options.add_argument('--disable-dev-shm-usage')
-chrome_options.binary_location = '/usr/bin/chromium-browser'
+# chrome_options.add_argument('--headless')
+# chrome_options.add_argument('--no-sandbox')
+# chrome_options.add_argument('--disable-dev-shm-usage')
+# chrome_options.binary_location = '/usr/bin/chromium-browser'
 
 # Get the current directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
