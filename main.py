@@ -1,5 +1,5 @@
 from telegram import Update, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup        
-from telegram.ext import Updater, CommandHandler, MessageHandler, ConversationHandler, CallbackContext, Filters
+from telegram.ext import Updater, CommandHandler, MessageHandler, ConversationHandler, InlineQueryHandler, CallbackQueryHandler, CallbackContext, Filters
 import logging, os, json, random, time
 from pytube import YouTube
 
@@ -147,9 +147,37 @@ def STATE3_youtube_handler(update, context):
         bot_send("You chose MP3")
     
     return ConversationHandler.END
-    
 
-    
+# TIMER 
+TIMER_start = None
+def timerstart(update: Update, context: CallbackContext):
+    global TIMER_start
+    if TIMER_start:
+        bot_send("Rectification: The timer has already been started. Did you perhaps try to end the timer?\n/timerend")
+        return
+    TIMER_start = D.now()
+    stopbutton = [[InlineKeyboardButton("STOP", callback_data="timer_stop")]]
+    context.bot.send_message(chat_id=chatID, text=f"Statement: You started the timer @{TIMER_start}.", reply_markup = InlineKeyboardMarkup(stopbutton))
+def timerend(update: Update, context: CallbackContext):
+    global TIMER_start
+    if not TIMER_start: 
+        bot_send("Rectification: The timer hasn't been started, thus cannot end. Did you perhaps try to start the timer?\n/timerstart")
+        return
+    bot_send(f"Statement: Timer has been stopped.\n\nResult: {D.now()-TIMER_start}\nStarttime: {TIMER_start}\nEndtime: {D.now()}\n\nStatus: I'm not yet programmed to save and archive your result.")
+    TIMER_start = None
+def timerterminate(update: Update, context: CallbackContext):
+    global TIMER_start
+    if not TIMER_start:
+        bot_send("Rectification: The timer isn't running right now, thus cannot be terminated.")
+        return
+    TIMER_start = None
+    bot_send("Statement: The timer has been terminated. You may start a new timer now:\n/timerstart")
+
+def queryhandler(update: Update, context: CallbackContext):
+    query = update.callback_query.data
+    if query == "timer_stop":
+        timerend(Update, CallbackContext)
+
 
 if __name__ == '__main__':
     startup()
@@ -158,6 +186,11 @@ if __name__ == '__main__':
     dispatcher.add_handler(CommandHandler("stop", stop))
     dispatcher.add_handler(CommandHandler("standard", standard))
     dispatcher.add_handler(CommandHandler("comics", comics))
+    dispatcher.add_handler(CommandHandler("timerstart", timerstart))
+    dispatcher.add_handler(CommandHandler("timerend", timerend))
+    dispatcher.add_handler(CommandHandler("timerterminate", timerterminate))
+
+    dispatcher.add_handler(CallbackQueryHandler(queryhandler))
 
     # Youtube Handlers and states 
     STATE1_youtube, STATE2_youtube, STATE3_youtube = range(3)
