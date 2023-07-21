@@ -42,7 +42,7 @@ def bot_send(message):
 def startup():
     print("Bot has been started")
     startup_message = get_random_sentence("startup")
-    bot_send(f"{startup_message} /youtube")
+    bot_send(startup_message)
 
 def stop(update: Update, context: CallbackContext):
     bot_send(json_data["stop"][random.randint(0, len(json_data["stop"])-1)])
