@@ -51,7 +51,7 @@ def stop(update: Update, context: CallbackContext):
 
 def status(update: Update, context: CallbackContext):
     verify_user(update.message)
-    bot_send(f"{get_random_sentence(status)}\n{sys.version})
+    bot_send(f"{get_random_sentence(status)}\n{sys.version}")
     
 def standard(update: Update, context: CallbackContext):
     keyboard = [
