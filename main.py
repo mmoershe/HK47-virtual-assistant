@@ -35,8 +35,8 @@ def verify_user(input):
         bot_send("Anomaly: Some meatbag tried accessing me with an ID that I'm not aware of is connected to you, master. The entire operation will be terminated.", f"{input.from_user.id = }", f"{input.from_user.name = }", sep="\n")
         stop('stop', stop)
 
-def bot_send(message): 
-    updater.bot.send_message(chat_id = chatID, text = message)
+def bot_send(message, reply_markup=None): 
+    updater.bot.send_message(chat_id = chatID, text = message, reply_markup = reply_markup)
     print("\t--------------", f"\t{message}", "\t--------------", sep="\n\n")
 
 def startup():
@@ -116,37 +116,7 @@ def comics(update: Update, context: CallbackContext):
     
 def calendar(update: Update, context: CallbackContext):
     bot_send("calendar has been triggered.")
-def youtube(update: Update, context: CallbackContext):
-    bot_send(get_random_sentence("youtube_link_request"))
-    return STATE1_youtube
 
-def STATE1_youtube_handler(update, context):
-    input_video = YouTube(update.message.text.strip())
-    keyboard = [
-        [KeyboardButton("Yes")],
-        [KeyboardButton("No")]
-    ]
-    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=False)
-    update.message.reply_text(f"Statement: The video is called:\n'{input_video.title}' [{input_video.length} seconds]\nby {input_video.author}\nQuestion: Is that correct?", reply_markup=reply_markup) 
-    return STATE2_youtube
-    
-def STATE2_youtube_handler(update, context):
-    if update.message.text.lower() != "Yes":
-        return ConversationHandler.END
-    
-    keyboard = [
-        [KeyboardButton("MP3")],
-        [KeyboardButton("MP4")]
-    ]
-    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=False)
-    update.message.reply_text(f"Query: Choose a file format.", reply_markup=reply_markup)
-    return STATE3_youtube
-
-def STATE3_youtube_handler(update, context): 
-    if update.message.text == "MP3":
-        bot_send("You chose MP3")
-    
-    return ConversationHandler.END
 
 # TIMER 
 TIMER_start = None
@@ -157,7 +127,7 @@ def timerstart(update: Update, context: CallbackContext):
         return
     TIMER_start = D.now()
     stopbutton = [[InlineKeyboardButton("STOP", callback_data="timer_stop")]]
-    context.bot.send_message(chat_id=chatID, text=f"Statement: You started the timer @{TIMER_start}.", reply_markup = InlineKeyboardMarkup(stopbutton))
+    bot_send(f"Statement: You started the timer @{TIMER_start}.", InlineKeyboardMarkup(stopbutton))
 def timerend(update: Update, context: CallbackContext):
     global TIMER_start
     if not TIMER_start: 
@@ -192,19 +162,6 @@ if __name__ == '__main__':
     dispatcher.add_handler(CommandHandler("timerterminate", timerterminate))
 
     dispatcher.add_handler(CallbackQueryHandler(queryhandler))
-
-    # Youtube Handlers and states 
-    STATE1_youtube, STATE2_youtube, STATE3_youtube = range(3)
-    dispatcher.add_handler(ConversationHandler(
-        entry_points=[CommandHandler("youtube", youtube)],
-        states={
-            STATE1_youtube: [MessageHandler(Filters.text, STATE1_youtube_handler)],
-            STATE2_youtube: [MessageHandler(Filters.text, STATE2_youtube_handler)],
-            STATE3_youtube: [MessageHandler(Filters.text, STATE3_youtube_handler)],
-        },
-        fallbacks = []
-    ))
-   
 
 
     # loop and making it closeable
