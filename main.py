@@ -1,18 +1,16 @@
 from telegram import Update, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup        
 from telegram.ext import Updater, CommandHandler, MessageHandler, ConversationHandler, InlineQueryHandler, CallbackQueryHandler, CallbackContext, Filters
-import logging, os, sys, json, random, time
 from pytube import YouTube
-import pyautogui
-import requests
 from bs4 import BeautifulSoup
 from beautiful_date import * 
 from dateutil import parser
+import logging, os, sys, json, random, time, requests, pyautogui
 
 
 # This project is using Python Telegram Bot v13.7, because the newer v20.3 uses asyncio and is super ANNOYING!!!
 
 current_path = os.path.dirname(os.path.abspath(__file__))
-json_file = open("memory.json", "r")
+json_file = open(os.path.join(current_path, "memory", "memory.json", "r"))
 json_data = json.load(json_file)
 token = json_data["token"]
 chatID = json_data["chatID"]
@@ -51,17 +49,13 @@ def stop(update: Update, context: CallbackContext):
 
 def status(update: Update, context: CallbackContext):
     verify_user(update.message)
+    myscreenshot = pyautogui.screenshot("myscreenshot.png")
     bot_send(f"Status: Functionality confirmed.\n\n{sys.version}")
     
 def standard(update: Update, context: CallbackContext):
-    keyboard = [
-        [KeyboardButton("Antwort 1")],
-        [KeyboardButton("/calendar")],
-        [KeyboardButton("Antwort 3")]
-    ]
-    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=False)
-    update.message.reply_text("standard reply", reply_markup=reply_markup)    
+    pass
 
+# COMICS
 def comics(update: Update, context: CallbackContext):
     def tableDataText(table):    
         """Parses a html segment started with tag <table> followed 
@@ -113,7 +107,7 @@ def comics(update: Update, context: CallbackContext):
         if publish_date in date_range: 
             bot_send(f"{type_comic}: {title} [{weekdays[publish_date.weekday()][:3]}]")
 
-    
+
 def calendar(update: Update, context: CallbackContext):
     bot_send("calendar has been triggered.")
 
