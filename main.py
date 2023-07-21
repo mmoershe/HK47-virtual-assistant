@@ -1,8 +1,8 @@
 from telegram import Update, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup        
 from telegram.ext import Updater, CommandHandler, MessageHandler, ConversationHandler, InlineQueryHandler, CallbackQueryHandler, CallbackContext, Filters
-import logging, os, json, random, time
+import logging, os, sys, json, random, time
 from pytube import YouTube
-
+import pyautogui
 import requests
 from bs4 import BeautifulSoup
 from beautiful_date import * 
@@ -11,6 +11,7 @@ from dateutil import parser
 
 # This project is using Python Telegram Bot v13.7, because the newer v20.3 uses asyncio and is super ANNOYING!!!
 
+current_path = os.path.dirname(os.path.abspath(__file__))
 json_file = open("memory.json", "r")
 json_data = json.load(json_file)
 token = json_data["token"]
@@ -49,9 +50,8 @@ def stop(update: Update, context: CallbackContext):
     os._exit(0)
 
 def status(update: Update, context: CallbackContext):
-    
     verify_user(update.message)
-    bot_send(get_random_sentence(status))
+    bot_send(f"{get_random_sentence(status)}\n{sys.version})
     
 def standard(update: Update, context: CallbackContext):
     keyboard = [
@@ -173,6 +173,7 @@ def timerterminate(update: Update, context: CallbackContext):
     TIMER_start = None
     bot_send("Statement: The timer has been terminated. You may start a new timer now:\n/timerstart")
 
+# Query Handler
 def queryhandler(update: Update, context: CallbackContext):
     query = update.callback_query.data
     if query == "timer_stop":
