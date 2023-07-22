@@ -55,8 +55,10 @@ def stop(update: Update, context: CallbackContext):
 
 def status(update: Update, context: CallbackContext):
     verify_user(update.message)
-    pyautogui.screenshot(os.path.join(current_path, "memory", "temporary_image.png"))
-    bot_send(f"Status: Functionality confirmed.\n\n{sys.version}", image_path=os.path.join(current_path, "memory", "temporary_image.png"))
+    screenshot_path = os.path.join(current_path, "memory", "temporary_image.png")
+    pyautogui.screenshot(screenshot_path)
+    bot_send(f"Status: Functionality confirmed.\n\n{sys.version}", image_path=screenshot_path)
+    os.remove(screenshot_path)
     
 def standard(update: Update, context: CallbackContext):
     stopbutton = [[InlineKeyboardButton("STOP", callback_data="timer_stop")]]
