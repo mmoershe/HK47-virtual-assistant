@@ -10,7 +10,7 @@ import logging, os, sys, json, random, time, requests, pyautogui
 # This project is using Python Telegram Bot v13.7, because the newer v20.3 uses asyncio and is super ANNOYING!!!
 
 current_path = os.path.dirname(os.path.abspath(__file__))
-json_file = open(os.path.join(current_path, "memory", "memory.json", "r"))
+json_file = open(os.path.join(current_path, "memory", "memory.json"), "r")
 json_data = json.load(json_file)
 token = json_data["token"]
 chatID = json_data["chatID"]
