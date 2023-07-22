@@ -1,4 +1,4 @@
-from telegram import Update, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup        
+from telegram import Update, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup, InputMediaPhoto     
 from telegram.ext import Updater, CommandHandler, MessageHandler, ConversationHandler, InlineQueryHandler, CallbackQueryHandler, CallbackContext, Filters
 from pytube import YouTube
 from bs4 import BeautifulSoup
@@ -33,9 +33,15 @@ def verify_user(input):
         bot_send("Anomaly: Some meatbag tried accessing me with an ID that I'm not aware of is connected to you, master. The entire operation will be terminated.", f"{input.from_user.id = }", f"{input.from_user.name = }", sep="\n")
         stop('stop', stop)
 
-def bot_send(message, reply_markup=None): 
-    updater.bot.send_message(chat_id = chatID, text = message, reply_markup = reply_markup)
-    print("\t--------------", f"\t{message}", "\t--------------", sep="\n\n")
+def bot_send(message, reply_markup=None, image_path=None): 
+    if not image_path:
+        updater.bot.send_message(chat_id = chatID, text = message, reply_markup = reply_markup)
+        print("\t--------------", f"\t{message}", "\t--------------", sep="\n\n")
+        return 
+    updater.bot.sendMediaGroup(chat_id=chatID, media=[InputMediaPhoto(media=open(image_path, "rb"), caption=message)])
+    print("\t--------------", f"\t{image_path}\n\tcaption: {message}", "\t--------------", sep="\n\n")
+
+
 
 def startup():
     print("Bot has been started")
@@ -50,10 +56,11 @@ def stop(update: Update, context: CallbackContext):
 def status(update: Update, context: CallbackContext):
     verify_user(update.message)
     pyautogui.screenshot(os.path.join(current_path, "memory", "temporary_image.png"))
-    bot_send(f"Status: Functionality confirmed.\n\n{sys.version}")
+    bot_send(f"Status: Functionality confirmed.\n\n{sys.version}", image_path=os.path.join(current_path, "memory", "temporary_image.png"))
     
 def standard(update: Update, context: CallbackContext):
-    pass
+    stopbutton = [[InlineKeyboardButton("STOP", callback_data="timer_stop")]]
+    bot_send("meine caption", image_path=os.path.join(current_path, "memory", "testimage.jpg"))
 
 # COMICS
 def comics(update: Update, context: CallbackContext):
