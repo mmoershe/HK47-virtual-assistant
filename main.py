@@ -49,7 +49,7 @@ def stop(update: Update, context: CallbackContext):
 
 def status(update: Update, context: CallbackContext):
     verify_user(update.message)
-    myscreenshot = pyautogui.screenshot("myscreenshot.png")
+    pyautogui.screenshot(os.path.join(current_path, "memory", "temporary_image.png"))
     bot_send(f"Status: Functionality confirmed.\n\n{sys.version}")
     
 def standard(update: Update, context: CallbackContext):
