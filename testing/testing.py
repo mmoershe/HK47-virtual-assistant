@@ -1,6 +1,6 @@
-import os
-import pyautogui 
+import sys, os 
 
-current_path = os.path.dirname(os.path.abspath(__file__))
-
-print(os.path.join(current_path, "memory", "testimage.jpg"))
+print(f"{sys.version = }")
+print(f"{sys.version_info = }")
+print(f"{os.name = }")
+print(f"{sys.platform = }")
