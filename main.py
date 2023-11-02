@@ -145,8 +145,7 @@ def queryhandler(update: Update, context: CallbackContext):
     query = update.callback_query.data.strip()
     if query == "timer_stop":
         timerend(Update, CallbackContext)
-    if query == "Stundenplan":
-        print("stundenplan has been triggered.")
+
 
 
 if __name__ == '__main__':
