@@ -15,6 +15,11 @@ echo activating venv
 source "$VENV_NAME"/bin/activate
 echo activated it 
 
+echo installing all the dependencies s
+pip install -r requirements.txt
+
 echo trying to pip freeze
 pip freeze
+
+
 echo done
