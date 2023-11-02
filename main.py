@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 from beautiful_date import * 
 from dateutil import parser
 import logging, os, sys, json, random, time, requests
+import subprocess
 
 
 # This project is using Python Telegram Bot v13.7, because the newer v20.3 uses asyncio and is super ANNOYING!!!
@@ -18,13 +19,8 @@ updater = Updater(token = token, use_context=True)
 dispatcher = updater.dispatcher
 weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
-'''
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
-)
-'''
 
+# FUNCTIONS
 def get_random_sentence(input):
     return json_data[input][random.randint(0, len(json_data[input])-1)]
 
@@ -40,9 +36,14 @@ def bot_send(message, reply_markup=None, image_path=None):
         return 
     updater.bot.sendMediaGroup(chat_id=chatID, media=[InputMediaPhoto(media=open(image_path, "rb"), caption=message)])
     print("\t--------------", f"\t{image_path}\n\tcaption: {message}", "\t--------------", sep="\n\n")
+    
+def get_raspberry_pi_temperature():
+    result = subprocess.run(['vcgencmd', 'measure_temp'], capture_output=True, text=True)
+    print(result)
+    return result.stdout.strip()
 
 
-
+# HANDLERS
 def startup():
     print("Bot has been started\n")
     startup_message = get_random_sentence("startup")
@@ -55,7 +56,7 @@ def stop(update: Update, context: CallbackContext):
 
 def status(update: Update, context: CallbackContext):
     verify_user(update.message)
-    bot_send(f"Functionality confirmed.\n{sys.version = }\n{sys.platform = }\n{os.system = }")
+    bot_send("Functionality confirmed.", get_raspberry_pi_temperature, f"{sys.version = }", f"{sys.platform = }", f"{os.system = }", sep="\n")
     
 def standard(update: Update, context: CallbackContext):
     stopbutton = [[InlineKeyboardButton("STOP", callback_data="timer_stop")]]
