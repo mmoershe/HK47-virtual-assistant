@@ -38,7 +38,6 @@ def bot_send(message, reply_markup=None, image_path=None):
     
 def get_raspberry_pi_temperature():
     result = subprocess.run(['vcgencmd', 'measure_temp'], capture_output=True, text=True)
-    print(result)
     return result.stdout.strip()
 
 
@@ -90,8 +89,6 @@ def comics(update: Update, context: CallbackContext):
             return BeautifulDate(parsed_date.year, parsed_date.month, parsed_date.day)
         except: 
             return 
-
-
     url = "https://starwars.fandom.com/wiki/List_of_future_comics"
     html = requests.get(url, auth=("user", "pass")).text
     future_swcomics_html = BeautifulSoup(html, "html.parser")
