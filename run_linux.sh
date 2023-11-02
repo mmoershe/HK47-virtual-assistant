@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo git pull; echo ""
+git pull
+
 VENV_NAME="HK-venv"
 
 echo "Checking if the venv already exists"; echo ""
