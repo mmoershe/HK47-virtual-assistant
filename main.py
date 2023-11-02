@@ -44,7 +44,7 @@ def bot_send(message, reply_markup=None, image_path=None):
 
 
 def startup():
-    print("Bot has been started\n")
+    print("Bot has been started\n\n")
     startup_message = get_random_sentence("startup")
     bot_send(startup_message)
 
