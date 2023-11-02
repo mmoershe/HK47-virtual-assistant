@@ -7,7 +7,6 @@ from dateutil import parser
 import logging, os, sys, json, random, time, requests
 import subprocess
 
-
 # This project is using Python Telegram Bot v13.7, because the newer v20.3 uses asyncio and is super ANNOYING!!!
 
 current_path = os.path.dirname(os.path.abspath(__file__))
