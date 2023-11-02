@@ -4,7 +4,7 @@ from pytube import YouTube
 from bs4 import BeautifulSoup
 from beautiful_date import * 
 from dateutil import parser
-import logging, os, sys, json, random, time, requests, pyautogui
+import logging, os, sys, json, random, time, requests
 
 
 # This project is using Python Telegram Bot v13.7, because the newer v20.3 uses asyncio and is super ANNOYING!!!
