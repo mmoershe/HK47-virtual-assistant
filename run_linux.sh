@@ -20,4 +20,7 @@ pip install -r requirements.txt
 echo List of dependencies:; echo ""
 pip freeze
 
-echo ""; echo "Done!"
+echo ""; echo "Done!"; echo ""
+
+echo "Running the main script now..."
+python main.py
