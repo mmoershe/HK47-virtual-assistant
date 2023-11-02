@@ -20,4 +20,4 @@ pip install -r requirements.txt
 echo List of dependencies:; echo ""
 pip freeze
 
-echo "Done!"
+echo ""; "Done!"
