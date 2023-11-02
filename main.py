@@ -56,7 +56,7 @@ def stop(update: Update, context: CallbackContext):
 
 def status(update: Update, context: CallbackContext):
     verify_user(update.message)
-    bot_send("Functionality confirmed.", get_raspberry_pi_temperature, f"{sys.version = }", f"{sys.platform = }", f"{os.system = }", sep="\n")
+    bot_send(f"Functionality confirmed.\n{get_raspberry_pi_temperature}\n{sys.version = }\n{sys.platform = }\n{os.system = }")
     
 def standard(update: Update, context: CallbackContext):
     stopbutton = [[InlineKeyboardButton("STOP", callback_data="timer_stop")]]

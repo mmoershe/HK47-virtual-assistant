@@ -6,3 +6,4 @@ def get_raspberry_pi_temperature():
     return result.stdout.strip()
 
 print(f"Heat levels: {get_raspberry_pi_temperature()}")
+
