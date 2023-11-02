@@ -22,5 +22,5 @@ pip freeze
 
 echo ""; echo "Done!"; echo ""
 
-echo "Running the main script now..."
+echo "Running the main script now..."; echo ""
 python main.py
