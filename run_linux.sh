@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VENV_NAME = "HK-venv"
+VENV_NAME="HK-venv"
 
 echo "Checking if the venv already exists"
 if [ -d "$VENV_NAME" ]; then 
@@ -11,4 +11,10 @@ else
     echo "venv has been created!"
 fi
 
+echo activating venv
 source "$VENV_NAME"/bin/activate
+echo activated it 
+
+echo trying to pip freeze
+pip freeze
+echo done
