@@ -58,7 +58,7 @@ def status(update: Update, context: CallbackContext):
     
 def standard(update: Update, context: CallbackContext):
     stopbutton = [[InlineKeyboardButton("STOP", callback_data="timer_stop")]]
-    bot_send("meine caption", image_path=os.path.join(current_path, "memory", "testimage.jpg"))
+    bot_send("testcaption", image_path=os.path.join(current_path, "memory", "testimage.jpg"))
 
 # COMICS
 def comics(update: Update, context: CallbackContext):
