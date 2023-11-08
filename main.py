@@ -20,7 +20,7 @@ weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", 
 
 
 # FUNCTIONS
-def get_random_sentence(input):
+def get_random_sentence(input: str) -> str:
     return json_data[input][random.randint(0, len(json_data[input])-1)]
 
 def verify_user(input):
@@ -36,18 +36,17 @@ def bot_send(message, reply_markup=None, image_path=None):
     updater.bot.sendMediaGroup(chat_id=chatID, media=[InputMediaPhoto(media=open(image_path, "rb"), caption=message)])
     print("\t--------------", f"\t{image_path}\n\tcaption: {message}", "\t--------------", sep="\n\n")
     
-def get_raspberry_pi_temperature():
+def get_raspberry_pi_temperature() -> str:
     result = subprocess.run(['vcgencmd', 'measure_temp'], capture_output=True, text=True)
     return result.stdout.strip()
 
 
 # HANDLERS
-def startup():
+def startup() -> None:
     print("Bot has been started\n")
-    startup_message = get_random_sentence("startup")
-    bot_send(startup_message)
+    bot_send(get_random_sentence("startup"))
 
-def stop(update: Update, context: CallbackContext):
+def stop(update: Update, context: CallbackContext) -> None:
     bot_send(json_data["stop"][random.randint(0, len(json_data["stop"])-1)])
     print("Bot is shutting down.")
     os._exit(0)
@@ -62,7 +61,7 @@ def standard(update: Update, context: CallbackContext):
 
 # COMICS
 def comics(update: Update, context: CallbackContext):
-    def tableDataText(table):    
+    def tableDataText(table) -> list:    
         """Parses a html segment started with tag <table> followed 
         by multiple <tr> (table rows) and inner <td> (table data) tags. 
         It returns a list of rows with inner columns. 
