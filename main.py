@@ -9,14 +9,14 @@ import subprocess
 
 # This project is using Python Telegram Bot v13.7, because the newer v20.3 uses asyncio and is super ANNOYING!!!
 
-current_path = os.path.dirname(os.path.abspath(__file__))
+current_path: str = os.path.dirname(os.path.abspath(__file__))
 json_file = open(os.path.join(current_path, "memory", "memory.json"), "r")
 json_data = json.load(json_file)
-token = json_data["token"]
-chatID = json_data["chatID"]
+token: str = json_data["token"]
+chatID: int = json_data["chatID"]
 updater = Updater(token = token, use_context=True)
 dispatcher = updater.dispatcher
-weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+weekdays: list = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
 
 # FUNCTIONS
