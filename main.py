@@ -9,18 +9,18 @@ import subprocess
 
 # This project is using Python Telegram Bot v13.7, because the newer v20.3 uses asyncio and is super ANNOYING!!!
 
-current_path = os.path.dirname(os.path.abspath(__file__))
+current_path: str = os.path.dirname(os.path.abspath(__file__))
 json_file = open(os.path.join(current_path, "memory", "memory.json"), "r")
 json_data = json.load(json_file)
-token = json_data["token"]
-chatID = json_data["chatID"]
+token: str = json_data["token"]
+chatID: int = json_data["chatID"]
 updater = Updater(token = token, use_context=True)
 dispatcher = updater.dispatcher
-weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+weekdays: list = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
 
 # FUNCTIONS
-def get_random_sentence(input):
+def get_random_sentence(input: str) -> str:
     return json_data[input][random.randint(0, len(json_data[input])-1)]
 
 def verify_user(input):
@@ -36,33 +36,32 @@ def bot_send(message, reply_markup=None, image_path=None):
     updater.bot.sendMediaGroup(chat_id=chatID, media=[InputMediaPhoto(media=open(image_path, "rb"), caption=message)])
     print("\t--------------", f"\t{image_path}\n\tcaption: {message}", "\t--------------", sep="\n\n")
     
-def get_raspberry_pi_temperature():
+def get_raspberry_pi_temperature() -> str:
     result = subprocess.run(['vcgencmd', 'measure_temp'], capture_output=True, text=True)
     return result.stdout.strip()
 
 
 # HANDLERS
-def startup():
+def startup() -> None:
     print("Bot has been started\n")
-    startup_message = get_random_sentence("startup")
-    bot_send(startup_message)
+    bot_send(get_random_sentence("startup"))
 
-def stop(update: Update, context: CallbackContext):
+def stop(update: Update, context: CallbackContext) -> None:
     bot_send(json_data["stop"][random.randint(0, len(json_data["stop"])-1)])
     print("Bot is shutting down.")
     os._exit(0)
 
 def status(update: Update, context: CallbackContext):
     verify_user(update.message)
-    bot_send(f"Functionality confirmed.\n\n{get_raspberry_pi_temperature()}\n{sys.version = }\n{sys.platform = }\n{os.system = }")
+    bot_send(f"Functionality confirmed.\n\n{get_raspberry_pi_temperature()}\n{sys.version = }\n{sys.platform = }")
     
 def standard(update: Update, context: CallbackContext):
     stopbutton = [[InlineKeyboardButton("STOP", callback_data="timer_stop")]]
-    bot_send("meine caption", image_path=os.path.join(current_path, "memory", "testimage.jpg"))
+    bot_send("testcaption", image_path=os.path.join(current_path, "memory", "testimage.jpg"))
 
 # COMICS
 def comics(update: Update, context: CallbackContext):
-    def tableDataText(table):    
+    def tableDataText(table) -> list:    
         """Parses a html segment started with tag <table> followed 
         by multiple <tr> (table rows) and inner <td> (table data) tags. 
         It returns a list of rows with inner columns. 
