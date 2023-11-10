@@ -68,7 +68,7 @@ def comics(update: Update, context: CallbackContext):
         Accepts only one <th> (table header/data) in the first row.
         """
         def rowgetDataText(tr, coltag='td'): # td (data) or th (header)       
-            return [td.get_text(strip=True) for td in tr.find_all(coltag)]  
+            return [td.get_text(strip=False) for td in tr.find_all(coltag)]  
         rows = []
         trs = table.find_all('tr')
         headerow = rowgetDataText(trs[0], 'th')
@@ -90,12 +90,17 @@ def comics(update: Update, context: CallbackContext):
             return 
     url = "https://starwars.fandom.com/wiki/List_of_future_comics"
     html = requests.get(url, auth=("user", "pass")).text
+    # print(f"{html = }")
     future_swcomics_html = BeautifulSoup(html, "html.parser")
+    # print(f"{future_swcomics_html = }")
     table = future_swcomics_html.find(id="prettytable")
+    # print(f"before: {table}")
     table = tableDataText(table)
+    # print(f"after: {table}")
+    print(f"{type(table) = }")
     table.pop(0)
     current_date = D.today()
-    date_range = []
+    date_range: list = []
     for i in range(7):
         date_range.append(current_date+i*days)
 
@@ -106,8 +111,22 @@ def comics(update: Update, context: CallbackContext):
         publish_date = convertToBeautifulDate(row[2])
         if not all([title, type_comic, publish_date]): 
             continue
-        if publish_date in date_range: 
-            bot_send(f"{type_comic}: {title} [{weekdays[publish_date.weekday()][:3]}]")
+        if publish_date not in date_range: 
+            continue
+        image_url= f"https://starwars.fandom.com/wiki/{title.replace(' ', '_')}"
+        print(f"{image_url}")
+        request_image_url = requests.get(image_url, auth=("user", "pass"))
+        if request_image_url.status_code == 200:
+            print("Comic Unterseite ist vorhanden und kann aufgerufen werden.")
+            # mit BeautifulSoup class="image image-thumbnail" finden, herunterladen, senden und löschen. 
+            # system für Bilder überlegen. Bild muss ja gar nicht einzigartig benannt sein, da es ja nur temporär ist und sofort nach der Nachricht gelöscht werden kann. Vielleicht nach dem bot_send noch löschen?
+            # Vielleicht sogar in der bot_send Funktion überprüfen ob angegebener image_path existiert??
+            image_path = None
+        else:
+            print("Comic Unterseite ist nicht vorhanden.")
+            image_path = None
+        
+        bot_send(f"{type_comic}: {title} [{weekdays[publish_date.weekday()][:3]}]", image_path=image_path)
 
 
 def calendar(update: Update, context: CallbackContext):
