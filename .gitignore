@@ -1,2 +1,4 @@
 /HK-venv/
 auth
+/auth
+credentials.json
